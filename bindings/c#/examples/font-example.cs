@@ -30,7 +30,7 @@ namespace font_example
             canvas.DrawText(font, 1, 6, new Color(0, 255, 0), text);
             matrix.SwapOnVsync(canvas);
 
-            Console.WriteLine($"Font Height: {font.Height()}");
+            Console.WriteLine($"Font Height: {font.Height()} Font Width: {font.Width(text)}");
 
             while (!Console.KeyAvailable)
             {

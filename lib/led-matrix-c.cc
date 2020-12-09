@@ -242,6 +242,22 @@ int height_font(struct LedFont * font) {
   return to_font(font)->height();
 }
 
+int width_font(struct LedFont* font, char *stri) {
+    const auto kerning = 0;
+    int sum = 0;
+    auto theFont = to_font(font);
+    std::string str = std::string(stri);
+
+    for (auto c : str) {
+        uint32_t codepoint = uint_least32_t(c);
+        int width = theFont->CharacterWidth(codepoint) + kerning;
+
+        sum += width;
+    }
+
+    return sum;
+}
+
 struct LedFont *create_outline_font(struct LedFont * font) {
   rgb_matrix::Font* outlineFont = to_font(font)->CreateOutlineFont();
   return from_font(outlineFont);

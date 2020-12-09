@@ -367,6 +367,9 @@ int baseline_font(struct LedFont *font);
 // Read the height of a font
 int height_font(struct LedFont *font);
 
+// Get the width of a string in a font
+int width_font(struct LedFont* font, char *str);
+
 // Creates an outline font based on an existing font instance
 struct LedFont *create_outline_font(struct LedFont *font);
 
