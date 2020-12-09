@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -21,11 +21,19 @@ namespace rpi_rgb_led_matrix_sharp
         [DllImport("librgbmatrix.so", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern void delete_font(IntPtr font);
 
+        [DllImport("librgbmatrix.so", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        internal static extern int height_font(IntPtr font);
+
         public RGBLedFont(string bdf_font_file_path)
         {
             _font = load_font(bdf_font_file_path);
         }
         internal IntPtr _font;
+
+        public int Height()
+        {
+            return height_font(_font);
+        }
 
         internal int DrawText(IntPtr canvas, int x, int y, Color color, string text, int spacing=0, bool vertical=false)
         {

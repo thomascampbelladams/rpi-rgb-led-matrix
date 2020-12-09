@@ -1,4 +1,4 @@
-﻿using rpi_rgb_led_matrix_sharp;
+using rpi_rgb_led_matrix_sharp;
 
 namespace minimal_example
 {
@@ -7,7 +7,13 @@ namespace minimal_example
         static int Main(string[] args)
         {
 
-            var matrix= new RGBLedMatrix(32, 2, 1);           
+            //var matrix= new RGBLedMatrix(32, 1, 1);
+            var matrix = new RGBLedMatrix(new RGBLedMatrixOptions
+            {
+                Rows= 32,
+                Cols= 64,
+                HardwareMapping= "adafruit-hat"
+            });
             var canvas = matrix.CreateOffscreenCanvas();
 
             for (var i = 0; i < 1000; ++i)

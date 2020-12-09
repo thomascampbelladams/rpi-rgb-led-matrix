@@ -16,14 +16,21 @@ namespace font_example
             string text = "Hello World!";
             if (args.Length > 1)            
                 text = args[1];
-            
 
-            var matrix = new RGBLedMatrix(32, 2, 1);
+
+            var matrix = new RGBLedMatrix(new RGBLedMatrixOptions
+            {
+                Rows = 32,
+                Cols = 64,
+                HardwareMapping = "adafruit-hat"
+            });
             var canvas = matrix.CreateOffscreenCanvas();
             var font = new RGBLedFont(args[0]);
 
             canvas.DrawText(font, 1, 6, new Color(0, 255, 0), text);
             matrix.SwapOnVsync(canvas);
+
+            Console.WriteLine($"Font Height: {font.Height()}");
 
             while (!Console.KeyAvailable)
             {
