@@ -220,8 +220,16 @@ void led_canvas_set_pixel(struct LedCanvas *canvas, int x, int y,
   to_canvas(canvas)->SetPixel(x, y, r, g, b);
 }
 
+void led_matrix_set_pixel(struct RGBLedMatrix* matrix, int x, int y, uint8_t r, uint8_t g, uint8_t b) {
+    to_matrix(matrix)->SetPixel(x, y, r, g, b);
+}
+
 void led_canvas_clear(struct LedCanvas *canvas) {
   to_canvas(canvas)->Clear();
+}
+
+void led_matrix_clear(struct RGBLedMatrix* matrix) {
+    to_matrix(matrix)->Clear();
 }
 
 void led_canvas_fill(struct LedCanvas *canvas, uint8_t r, uint8_t g, uint8_t b) {

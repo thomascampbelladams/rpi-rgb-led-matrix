@@ -158,7 +158,7 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
                 }
             }
 
-            this._matrix.SwapOnVsync(this._canvas);
+            Sync();
             Thread.Sleep(animationDelay);
         }
 
@@ -170,6 +170,7 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
         public void Clear()
         {
             this._canvas.Clear();
+            this._matrix.Clear();
         }
 
         private void DrawSingleFrame(uint[][] animationFrame, int startX, int startY, bool isTwoBitAnimation, int animationDelay)
@@ -191,26 +192,25 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
                             uint randColor = (uint)new Random().Next(0, 0xFFFFFF);
                             Color color = new Color(randColor);
 
-                            this._canvas.SetPixel(startX + j, startY + i, color);
+                            SetPixel(startX + j, startY + i, color, false);
                         }
                         else if (animationPixel == 1)
                         {
-                            this._canvas.SetPixel(startX + j, startY + i, new Color(maxColorValue));
+                            SetPixel(startX + j, startY + i, new Color(maxColorValue), false);
                         }
                         else
                         {
-                            this._canvas.SetPixel(startX + j, startY + i, new Color(0));
+                            SetPixel(startX + j, startY + i, new Color(0), false);
                         }
                     }
                     else
                     {
                         Color color = new Color(animationPixel);
-                        this._canvas.SetPixel(startX + j, startY + i, color);
+                        SetPixel(startX + j, startY + i, color, false);
                     }
                 }
             }
 
-            this._matrix.SwapOnVsync(this._canvas);
             Thread.Sleep(animationDelay);
         }
 
@@ -247,13 +247,12 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
 
             while (shown <= numberOfTimesToShow)
             {
-                int randomXStart = new Random().Next(0, this._matrixWidth);
-                int randomYStart = new Random().Next(0, this._matrixHeight);
+                int randomXStart = new Random().Next(0, this._matrixWidth-pixelSpriteWidth);
+                int randomYStart = new Random().Next(0, this._matrixHeight-pixelSpriteHeight);
 
                 foreach (uint[][] animationFrame in animation)
                 {
                     DrawSingleFrame(animationFrame, randomXStart, randomYStart, isTwoBitAnimation, animationDelay);
-                    Clear();
                 }
 
                 ClearSprite(pixelSpriteWidth, pixelSpriteHeight, randomXStart, randomYStart, action, animationDelay);
@@ -261,21 +260,117 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             }
         }
 
+        private void SetPixel(int x, int y, Color color, bool useCanvas)
+        {
+            if (useCanvas)
+            {
+                this._canvas.SetPixel(x, y, color);
+            }
+            else
+            {
+                this._matrix.SetPixel(x, y, color);
+            }
+        }
+
+        private void Sync()
+        {
+            this._matrix.SwapOnVsync(this._canvas);
+        }
+
         private void ClearSprite(int pixelSpriteWidth, int pixelSpriteHeight, int x, int y, Action action, int animationDelay)
         {
-            for (int i = 0; i < pixelSpriteWidth; i++)
+            for (int i = 0; i < pixelSpriteHeight; i++)
             {
-                for (int j = 0; j < pixelSpriteHeight; j++)
+                for (int j = 0; j < pixelSpriteWidth; j++)
                 {
-                    this._canvas.SetPixel(x + j, y + i, new Color(0));
+                    SetPixel(x + j, y + i, new Color(0), false);
                 }
             }
 
             action();
 
-            this._matrix.SwapOnVsync(this._canvas);
+            Thread.Sleep(animationDelay);
+        }
+
+        private void IncreaseTransition(int w, int xOffset, int row, int animationDelay, Color color)
+        {
+            int newX = w + xOffset;
+
+            SetPixel(newX, row, color, false);
 
             Thread.Sleep(animationDelay);
+        }
+
+        private void DecreaseTransition(int w, int xOffset, int row, int animationDelay)
+        {
+            SetPixel(w + xOffset, row, new Color(0, 0, 0), false);
+
+            Thread.Sleep(animationDelay);
+        }
+
+        public void RainbowTransition(int animationDelay, int heightOfColorBlock, int widthOfColorBlock, Action action)
+        {
+            int row = 0;
+            uint[] colors = new uint[]
+            {
+                0xff0000, //red
+                0xff7f00, //orange
+                0xffff00, //yellow
+                0x00ff00, //green
+                0x0000ff, //blue
+                0x4b0082, //indigo
+                0x7F00FF //violet
+            };
+            int colorIndex = 0;
+            int xOffset = 0;
+
+            while (xOffset < this._matrixWidth)
+            {
+                Console.WriteLine($"{xOffset}");
+                while (row < this._matrixHeight)
+                {
+                    for (int w = 0; w < widthOfColorBlock; w++)
+                    {
+                        IncreaseTransition(w, xOffset, row, animationDelay, new Color(colors[colorIndex]));
+                    }
+
+                    row++;
+
+                    if (row % heightOfColorBlock == 0)
+                    {
+                        colorIndex++;
+
+                        if (colorIndex >= colors.Length)
+                        {
+                            colorIndex = 0;
+                        }
+                    }
+                }
+
+                xOffset += widthOfColorBlock;
+                row = 0;
+            }
+
+            xOffset = this._matrixWidth - widthOfColorBlock;
+            row = this._matrixHeight;
+
+            while (xOffset >= 0)
+            {
+                while (row >= 0)
+                {
+                    for (int w = widthOfColorBlock-1; w >= 0; w--)
+                    {
+                        DecreaseTransition(w, xOffset, row, animationDelay);
+                    }
+
+                    row--;
+                }
+
+                xOffset -= widthOfColorBlock;
+                row = this._matrixHeight;
+            }
+
+            action();
         }
     }
 }

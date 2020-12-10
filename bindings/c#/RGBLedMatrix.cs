@@ -37,6 +37,12 @@ namespace rpi_rgb_led_matrix_sharp
 
         [DllImport("librgbmatrix.so")]
         internal static extern void led_matrix_set_brightness(IntPtr matrix, byte brightness);
+
+        [DllImport("librgbmatrix.so")]
+        internal static extern void led_matrix_set_pixel(IntPtr matrix, int x, int y, byte r, byte g, byte b);
+
+        [DllImport("librgbmatrix.so")]
+        internal static extern void led_matrix_clear(IntPtr matrix);
         #endregion
 
         public RGBLedMatrix(int rows, int chained, int parallel)
@@ -130,6 +136,16 @@ namespace rpi_rgb_led_matrix_sharp
         {
             canvas._canvas = led_matrix_swap_on_vsync(matrix, canvas._canvas);
             return canvas;
+        }
+
+        public void SetPixel(int x, int y, Color color)
+        {
+            led_matrix_set_pixel(this.matrix, x, y, color.R, color.G, color.B);
+        }
+
+        public void Clear()
+        {
+            led_matrix_clear(this.matrix);
         }
 
         public byte Brightness

@@ -303,8 +303,12 @@ void led_canvas_get_size(const struct LedCanvas *canvas,
 void led_canvas_set_pixel(struct LedCanvas *canvas, int x, int y,
                           uint8_t r, uint8_t g, uint8_t b);
 
+void led_matrix_set_pixel(struct RGBLedMatrix* matrix, int x, int y, uint8_t r, uint8_t g, uint8_t b);
+
 /** Clear screen (black). */
 void led_canvas_clear(struct LedCanvas *canvas);
+
+void led_matrix_clear(struct RGBLedMatrix* matrix);
 
 /** Fill matrix with given color. */
 void led_canvas_fill(struct LedCanvas *canvas, uint8_t r, uint8_t g, uint8_t b);
