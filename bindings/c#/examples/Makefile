@@ -14,6 +14,7 @@ all: $(CSHARP_LIB)
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:matrix-rain.exe matrix-rain.cs
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:font-example.exe font-example.cs
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:pulsing-brightness.exe pulsing-brightness.cs
+	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:animation-example.exe animation-example.cs
 
 minimal-example.exe: $(CSHARP_LIB)
 	cp $(RGB_LIBRARY) $(RGB_LIBRARY_NAME).so

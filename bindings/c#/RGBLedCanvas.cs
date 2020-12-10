@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -92,6 +92,12 @@ namespace rpi_rgb_led_matrix_sharp
             R = r;
             G = g;
             B = b;
+        }
+        public Color(uint hexValue)
+        {
+            R = (byte)((hexValue & 0xff0000) >> 0x10);
+            G = (byte)((hexValue & 0xff00) >> 8);
+            B = (byte)(hexValue & 0xff);
         }
         public byte R;
         public byte G;

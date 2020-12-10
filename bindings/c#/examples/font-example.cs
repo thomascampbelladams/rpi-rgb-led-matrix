@@ -33,6 +33,7 @@ namespace font_example
             //screen.DrawCenteredText(text, new Color(0, 255, 0), true);
 
             screen.VerticalMarqueeText(text, new Color(0, 255, 0), 25, false);
+            screen.HorizontalMarqueeText(text, new Color(0, 255, 0), 25, false);
 
             while (!Console.KeyAvailable)
             {

@@ -96,7 +96,7 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             }
             else
             {
-                while(yOffset > -maxHeight)
+                while (yOffset > -maxHeight)
                 {
                     this.IncrementMarquee(yOffset, runIndefinitely, maxHeight, lines, animationDelay, false, color);
                     yOffset--;
@@ -104,12 +104,41 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             }
         }
 
-        private void IncrementMarquee(int offset, bool isRunningIndefinitely, int maxNumber, List<Glyph> glyphs, 
+        public void HorizontalMarqueeText(string lineText, Color color, int animationDelay, bool runIndefinitely)
+        {
+            int xOffset = this._matrixWidth;
+            int maxWidth = 0;
+            List<Glyph> lines = this.GetLines(lineText, VerticleAlignment.Middle, HorizontalAlignment.Center);
+
+            foreach (Glyph glyph in lines)
+            {
+                maxWidth = glyph.X + this._font.Width(lineText);
+            }
+
+            if (runIndefinitely)
+            {
+                while (true)
+                {
+                    this.IncrementMarquee(xOffset, runIndefinitely, maxWidth, lines, animationDelay, true, color);
+                    xOffset--;
+                }
+            }
+            else
+            {
+                while (xOffset > -maxWidth)
+                {
+                    this.IncrementMarquee(xOffset, runIndefinitely, maxWidth, lines, animationDelay, true, color);
+                    xOffset--;
+                }
+            }
+        }
+
+        private void IncrementMarquee(int offset, bool isRunningIndefinitely, int maxNumber, List<Glyph> glyphs,
             int animationDelay, bool isHorizontal, Color color)
         {
             if (isRunningIndefinitely)
             {
-                if (offset < - maxNumber)
+                if (offset < -maxNumber)
                 {
                     offset = maxNumber;
                 }
@@ -122,7 +151,7 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
                 if (isHorizontal)
                 {
                     this._canvas.DrawText(this._font, glyph.X + offset, glyph.Y, color, $"{glyph.Character}");
-                } 
+                }
                 else
                 {
                     this._canvas.DrawText(this._font, glyph.X, glyph.Y + offset, color, $"{glyph.Character}");
@@ -140,18 +169,113 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
 
         public void Clear()
         {
-            //this._matrix.Dispose();
-            //this._matrix = new RGBLedMatrix(new RGBLedMatrixOptions
-            //{
-            //    Rows = this._matrixHeight,
-            //    Cols = this._matrixWidth,
-            //    HardwareMapping = this._hardwareMapping
-            //});
-
-            //this._canvas = this._matrix.CreateOffscreenCanvas();
             this._canvas.Clear();
+        }
 
-            //this._matrix.SwapOnVsync(this._canvas);
+        private void DrawSingleFrame(uint[][] animationFrame, int startX, int startY, bool isTwoBitAnimation, int animationDelay)
+        {
+            uint maxColorValue = 0xFFFFFF;
+
+            for (int i = 0; i < animationFrame.Length; i++)
+            {
+                uint[] animationRow = animationFrame[i];
+
+                for (int j = 0; j < animationRow.Length; j++)
+                {
+                    uint animationPixel = animationRow[j];
+
+                    if (isTwoBitAnimation)
+                    {
+                        if (animationPixel == 2)
+                        {
+                            uint randColor = (uint)new Random().Next(0, 0xFFFFFF);
+                            Color color = new Color(randColor);
+
+                            this._canvas.SetPixel(startX + j, startY + i, color);
+                        }
+                        else if (animationPixel == 1)
+                        {
+                            this._canvas.SetPixel(startX + j, startY + i, new Color(maxColorValue));
+                        }
+                        else
+                        {
+                            this._canvas.SetPixel(startX + j, startY + i, new Color(0));
+                        }
+                    }
+                    else
+                    {
+                        Color color = new Color(animationPixel);
+                        this._canvas.SetPixel(startX + j, startY + i, color);
+                    }
+                }
+            }
+
+            this._matrix.SwapOnVsync(this._canvas);
+            Thread.Sleep(animationDelay);
+        }
+
+        private Tuple<int, int> FindAnimationFrameWidthAndHeight(uint[][][] animation)
+        {
+            int largestWidth = 0;
+            int largestHeight = 0;
+                                                                                                                                                                              
+            foreach (uint[][] animationFrame in animation)
+            {
+                if (animationFrame.Length > largestHeight)
+                {
+                    largestHeight = animationFrame.Length;
+                }
+
+                foreach (uint[] animationRow in animationFrame)
+                {
+                    if (animationRow.Length > largestWidth)
+                    {
+                        largestWidth = animationRow.Length;
+                    }
+                }
+            }
+
+            return new Tuple<int, int>(largestWidth, largestHeight); 
+        }
+
+        public void DoAnimation(uint[][][] animation, int animationDelay, int numberOfTimesToShow, Action action, bool isTwoBitAnimation)
+        {
+            Tuple<int, int> widthAndHeight = FindAnimationFrameWidthAndHeight(animation);
+            int pixelSpriteWidth = widthAndHeight.Item1;
+            int pixelSpriteHeight = widthAndHeight.Item2;
+            int shown = 0;
+
+            while (shown <= numberOfTimesToShow)
+            {
+                int randomXStart = new Random().Next(0, this._matrixWidth);
+                int randomYStart = new Random().Next(0, this._matrixHeight);
+
+                foreach (uint[][] animationFrame in animation)
+                {
+                    DrawSingleFrame(animationFrame, randomXStart, randomYStart, isTwoBitAnimation, animationDelay);
+                    Clear();
+                }
+
+                ClearSprite(pixelSpriteWidth, pixelSpriteHeight, randomXStart, randomYStart, action, animationDelay);
+                shown++;
+            }
+        }
+
+        private void ClearSprite(int pixelSpriteWidth, int pixelSpriteHeight, int x, int y, Action action, int animationDelay)
+        {
+            for (int i = 0; i < pixelSpriteWidth; i++)
+            {
+                for (int j = 0; j < pixelSpriteHeight; j++)
+                {
+                    this._canvas.SetPixel(x + j, y + i, new Color(0));
+                }
+            }
+
+            action();
+
+            this._matrix.SwapOnVsync(this._canvas);
+
+            Thread.Sleep(animationDelay);
         }
     }
 }
