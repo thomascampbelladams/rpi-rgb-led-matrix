@@ -9,8 +9,6 @@ namespace rpi_rgb_led_matrix_sharp.Utils
 {
     public static class LayoutUtils
     {
-        private static bool debug = true;
-
         private static IEnumerable<T> Slice<T>(List<T> source, int from, int to = -1)
         {
             if (to == -1)
@@ -30,23 +28,14 @@ namespace rpi_rgb_led_matrix_sharp.Utils
         {
             IEnumerable<char> glyphIenum = glyphs.Where((glyph, i) =>
             {
-                if (debug) Console.WriteLine($"Found glyph: {glyph.Character} at index: {i}");
-
                 return !(i == 0 && IsSeperator(glyph.Character));
             })
             .Select(glyph =>
             {
-                if (debug) Console.WriteLine($"Selecting Glyph {glyph.Character}");
-
                 return glyph.Character;
             });
 
             char[] charArray = glyphIenum.ToArray();
-
-            if (debug) Console.WriteLine($"Found this Ienum for glyphs {glyphIenum}");
-            if (debug) Console.WriteLine($"This is it as an array {charArray}");
-            if (debug) Console.WriteLine($"This is it as a string {new string(charArray)}");
-
             return new string(charArray).IndexOf(' ');
         }
 
@@ -58,14 +47,12 @@ namespace rpi_rgb_led_matrix_sharp.Utils
 
             if (index > 0)
             {
-                if (debug) Console.WriteLine($"Found index past zero");
                 ret.Add(Slice<Glyph>(leftOverGlyphs, 0, index).ToList());
 
                 while (index > 0)
                 {
                     List<Glyph> glyphs1 = Slice<Glyph>(leftOverGlyphs, 0, index).ToList();
 
-                    if (debug) Console.WriteLine($"Found word with {glyphs1.Count} letters");
                     leftOverGlyphs = Slice<Glyph>(leftOverGlyphs, index).ToList();
                     index = GetIndexOfWhiteSpace(leftOverGlyphs);
                     ret.Add(Slice<Glyph>(leftOverGlyphs, 0, index).ToList());
@@ -73,7 +60,6 @@ namespace rpi_rgb_led_matrix_sharp.Utils
             }
             else
             {
-                if (debug) Console.WriteLine($"Didn't Find index past zero");
                 ret.Add(Slice<Glyph>(leftOverGlyphs, 0, index).ToList());
             }
 
@@ -106,7 +92,6 @@ namespace rpi_rgb_led_matrix_sharp.Utils
 
                 if (tmpLineWidth + wordWidth > maxWidth)
                 {
-                    if (debug) Console.WriteLine($"new line: tmpLineWidth: {tmpLineWidth} wordWidth: {wordWidth} maxWidth {maxWidth}");
                     lines.Add(tmpLine);
                     tmpLine = new List<List<Glyph>>();
                     tmpLine.Add(glyphList);
@@ -114,7 +99,6 @@ namespace rpi_rgb_led_matrix_sharp.Utils
                 }
                 else
                 {
-                    if (debug) Console.WriteLine($"same line: tmpLineWidth: {tmpLineWidth} wordWidth: {wordWidth} maxWidth {maxWidth}");
                     tmpLine.Add(glyphList);
                     tmpLineWidth += wordWidth;
                 }
@@ -145,7 +129,7 @@ namespace rpi_rgb_led_matrix_sharp.Utils
             switch (alignV)
             {
                 case VerticleAlignment.Middle:
-                    offsetY = Convert.ToInt32(Math.Floor((double)((containerH - blockH) / 2)));
+                    offsetY = Convert.ToInt32(Math.Floor((decimal)((containerH - blockH) / 2)));
                     break;
                 case VerticleAlignment.Bottom:
                     offsetY = containerH - blockH;
@@ -162,7 +146,7 @@ namespace rpi_rgb_led_matrix_sharp.Utils
                     switch (alignH)
                     {
                         case HorizontalAlignment.Center:
-                            offsetX = Convert.ToInt32(Math.Floor((double)((containerW - lineW) / 2)));
+                            offsetX = Convert.ToInt32(Math.Floor((decimal)((containerW - lineW) / 2)));
                             break;
 
                         case HorizontalAlignment.Right:
@@ -173,7 +157,7 @@ namespace rpi_rgb_led_matrix_sharp.Utils
                     foreach (Glyph glyph in word)
                     {
                         glyph.X = offsetX;
-                        if (debug) Console.WriteLine($"offsetY: {offsetY} i: {i}, lineH: {lineH}");
+                        Console.WriteLine($"glyph {glyph.Character} y: {offsetY + i * lineH}");
                         glyph.Y = offsetY + i * lineH;
 
                         offsetX += glyph.Width;
