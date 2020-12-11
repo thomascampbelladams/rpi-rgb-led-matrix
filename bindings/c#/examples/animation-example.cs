@@ -1,7 +1,7 @@
 using rpi_rgb_led_matrix_sharp.Helpers;
-using System.Threading;
 using rpi_rgb_led_matrix_sharp;
 using rpi_rgb_led_matrix_sharp.Models;
+using System;
 
 namespace animation_example 
 {
@@ -244,24 +244,17 @@ namespace animation_example
 				HardwareMapping = "adafruit-hat"
 			});
 			CanvasHelper screen = new CanvasHelper(matrix, 32, 64, "../../../fonts/4x6.bdf");
-            List<RGBLedCanvas> santaFrames = new List<RGBLedCanvas>();
-            List<RGBLedCanvas> fireworkFrames = new List<RGBLedCanvas>();
-
-            santaFrames = screen.DoAnimation(santaAnimation, 10, false, matrix1 => screen.CreateNewCanvas());
-            fireworkFrames = screen.DoAnimation(fireworkAnimation, 60, true, matrix1 => screen.CreateNewCanvas());
+            Scene santaScene = new Scene(matrix, 100, screen.DoAnimation(santaAnimation, 10, false, matrix1 => screen.CreateNewCanvas()));
+            Scene fireworkScene = new Scene(matrix, 100, screen.DoAnimation(fireworkAnimation, 60, true, matrix1 => screen.CreateNewCanvas()));
 
             while (true)
             {
-                foreach (RGBLedCanvas canvas in santaFrames)
-                {
-                    matrix.SwapOnVsync(canvas);
-                    Thread.Sleep(100);
-                }
+                santaScene.Render();
+                fireworkScene.Render();
 
-                foreach (RGBLedCanvas canvas in fireworkFrames)
+                if (Console.KeyAvailable)
                 {
-                    matrix.SwapOnVsync(canvas);
-                    Thread.Sleep(100);
+                    break;
                 }
             }
 

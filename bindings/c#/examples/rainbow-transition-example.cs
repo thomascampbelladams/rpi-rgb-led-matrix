@@ -1,8 +1,6 @@
 using rpi_rgb_led_matrix_sharp.Helpers;
 using rpi_rgb_led_matrix_sharp;
 using rpi_rgb_led_matrix_sharp.Models;
-using System.Threading;
-using System.Collections.Generic;
 using System;
 
 namespace rainbow_transition_example
@@ -18,16 +16,15 @@ namespace rainbow_transition_example
                 HardwareMapping = "adafruit-hat"
             });
             CanvasHelper screen = new CanvasHelper(matrix, 32, 64, "../../../fonts/4x6.bdf");
-            List<RGBLedCanvas> fireworkFrames = screen.RainbowTransition(4, 4);
+            Scene rainbowScene = new Scene(matrix, 10, screen.RainbowTransition(4, 4));
 
             while (true)
             {
-                Console.WriteLine("Showing rainbow");
-                foreach (RGBLedCanvas canvas in fireworkFrames)
-                {
-                    matrix.SwapOnVsync(canvas);
+                rainbowScene.Render();
 
-                    Thread.Sleep(10);
+                if (Console.KeyAvailable)
+                {
+                    break;
                 }
             }
 

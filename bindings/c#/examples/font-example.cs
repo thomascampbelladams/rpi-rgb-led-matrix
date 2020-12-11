@@ -1,9 +1,7 @@
 using rpi_rgb_led_matrix_sharp;
-using System;
-using System.Threading;
-using System.Linq;
-using System.Collections.Generic;
 using rpi_rgb_led_matrix_sharp.Helpers;
+using rpi_rgb_led_matrix_sharp.Models;
+using System;
 
 namespace font_example
 {
@@ -28,31 +26,19 @@ namespace font_example
                 Cols = 64,
                 HardwareMapping = "adafruit-hat"
             });
-            CanvasHelper screen = new CanvasHelper(matrix, 32, 64, "../../../fonts/8x13B.bdf");
-            List<RGBLedCanvas> testFrames1;
-            List<RGBLedCanvas> testFrames2;
-
-            testFrames1 = screen.HorizontalMarqueeText("HELLO WORLD", new Color(12237498));
-            testFrames2 = screen.VerticalMarqueeText("HELLO WORLD", new Color(10000536));
+            CanvasHelper screen = new CanvasHelper(matrix, 32, 64, args[0]);
+            Scene testScene1 = new Scene(matrix, 60, screen.HorizontalMarqueeText(text, new Color(12237498)));
+            Scene testScene2 = new Scene(matrix, 60, screen.VerticalMarqueeText(text, new Color(10000536)));
 
             while (true)
             {
-                foreach (RGBLedCanvas canvas in testFrames1)
-                {
-                    matrix.SwapOnVsync(canvas);
-                    Thread.Sleep(60);
-                }
+                testScene1.Render();
+                testScene2.Render();
 
-                foreach (RGBLedCanvas canvas in testFrames2)
+                if (Console.KeyAvailable)
                 {
-                    matrix.SwapOnVsync(canvas);
-                    Thread.Sleep(60);
+                    break;
                 }
-            }
-
-            while (!Console.KeyAvailable)
-            {
-                Thread.Sleep(250);
             }
 
             return 0;

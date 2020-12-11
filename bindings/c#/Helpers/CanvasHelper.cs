@@ -14,7 +14,6 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
         private RGBLedFont _font;
         private int _matrixWidth = 64;
         private int _matrixHeight = 32;
-        private string _hardwareMapping = "adafruit-hat";
         private Dictionary<string, List<Glyph>> cachesMappedGlyphs = new Dictionary<string, List<Glyph>>();
         private Dictionary<string, RGBLedCanvas> cachedCanvases = new Dictionary<string, RGBLedCanvas>();
 
@@ -60,7 +59,6 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
 
         public RGBLedCanvas DrawHorizontallyCenteredText(string lineText, Color color)
         {
-            string cachedCanvasKey = $"{lineText}--DrawHorizontallyCenteredText--{color.R},{color.B},{color.G}";
             RGBLedCanvas ret = this._matrix.CreateOffscreenCanvas();
             List<Glyph> glyphs;
             
@@ -84,7 +82,6 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
 
         public RGBLedCanvas DrawCenteredText(string lineText, Color color)
         {
-            string cachedCanvasKey = $"{lineText}--DrawCenteredText--{color.R},{color.B},{color.G}";
             RGBLedCanvas ret = this._matrix.CreateOffscreenCanvas();
             List<Glyph> glyphs;
            
@@ -159,7 +156,6 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             bool isHorizontal, Color color)
         {
             RGBLedCanvas ret = this._matrix.CreateOffscreenCanvas();
-            int maxNumber = (isHorizontal) ? this._matrixHeight + stringMeasure : this._matrixWidth + stringMeasure;
 
             foreach (Glyph glyph in glyphs)
             {
@@ -278,42 +274,6 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return ret;
         }
 
-        //private RGBLedCanvas IncreaseTransition(int xBoundForFrame, int currentColorIndex, int yBoundForFrame, int heightOfColorBlock, int widthOfColorBlock, uint[] colors)
-        //{
-        //    RGBLedCanvas canvas = this._matrix.CreateOffscreenCanvas();
-
-        //    for (int y1 = 0; y1 < yBoundForFrame; y1++)
-        //    {
-        //        for (int x1 = xBoundForFrame; x1 < xBoundForFrame + widthOfColorBlock; x1++)
-        //        {
-        //            Color color = new Color(colors[currentColorIndex]);
-
-        //            canvas.SetPixel(x1, yBoundForFrame, new Color(colors[currentColorIndex]));
-        //        }
-        //    }
-            
-
-        //    ret.Add(canvas);
-        //    yBoundForFrame++;
-
-        //    if (yBoundForFrame % heightOfColorBlock == 0)
-        //    {
-        //        currentColorIndex++;
-
-        //        if (currentColorIndex == colors.Length - 1)
-        //        {
-        //            currentColorIndex = 0;
-        //        }
-        //    }
-
-        //    if (yBoundForFrame > this._matrixHeight)
-        //    {
-        //        y = 0;
-        //    }
-
-        //    return canvas;
-        //}
-
         public List<RGBLedCanvas> RainbowTransition(int heightOfColorBlock, int widthOfColorBlock)
         {
             uint[] colors = new uint[]
@@ -327,8 +287,6 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
                 0x7F00FF //violet
             };
             int y = 0;
-            int colorIndex = 0;
-            int x = 0;
             int xBoundForFrame = 0;
             int currentColorIndex = 0;
             int yBoundForFrame = heightOfColorBlock;
@@ -344,8 +302,6 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
                     {
                         for (int x1 = 0; x1 < xBoundForFrame + widthOfColorBlock; x1++)
                         {
-                            Color color = new Color(colors[currentColorIndex]);
-
                             canvas.SetPixel(x1, y1, new Color(colors[currentColorIndex]));
                         }
 

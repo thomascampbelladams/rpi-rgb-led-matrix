@@ -1,8 +1,7 @@
 using rpi_rgb_led_matrix_sharp.Helpers;
 using rpi_rgb_led_matrix_sharp.Models;
-using System.Collections.Generic;
-using System.Threading;
 using rpi_rgb_led_matrix_sharp;
+using System;
 
 namespace merry_christmas_example
 {
@@ -245,55 +244,31 @@ namespace merry_christmas_example
 				HardwareMapping = "adafruit-hat"
 			});
 			CanvasHelper screen = new CanvasHelper(matrix, 32, 64, "../../../fonts/8x13B.bdf");
-			List<RGBLedCanvas> christmasFrame;
-			List<RGBLedCanvas> happyThxgivingFrame;
-			List<RGBLedCanvas> santaFrames = new List<RGBLedCanvas>();
-			List<RGBLedCanvas> fireworkFrames = new List<RGBLedCanvas>();
-			List<RGBLedCanvas> rainbowFrames = new List<RGBLedCanvas>();
 
-			screen.SetFont("../../../fonts/8x13B.bdf");
-			christmasFrame = screen.HorizontalMarqueeText("MERRY CHRISTMAS", new Color(12237498));
-			santaFrames = screen.DoAnimation(santaAnimation, 10, false, matrix1 => screen.CreateNewCanvas());
-			fireworkFrames = screen.DoAnimation(fireworkAnimation, 60, true,
-					matrix1 =>
-					{
-						return screen.DrawCenteredText("HAPPY HOLIDAYS", new Color(10000536));
-					});
-			happyThxgivingFrame = screen.VerticalMarqueeText("HAPPY THXGIVING", new Color(10000536));
-			rainbowFrames = screen.RainbowTransition(4, 4);
+            Scene christmasScene = new Scene(matrix, 60, screen.HorizontalMarqueeText("MERRY CHRISTMAS", new Color(12237498)));
+            Scene thanksGivingScene = new Scene(matrix, 30, screen.VerticalMarqueeText("HAPPY THXGIVING", new Color(10000536)));
+            Scene santaAnimationScene = new Scene(matrix, 100, screen.DoAnimation(santaAnimation, 10, false, matrix1 => screen.CreateNewCanvas()));
+            Scene fireworkScene = new Scene(matrix, 100, screen.DoAnimation(fireworkAnimation, 60, true,
+                matrix1 =>
+                {
+                    return screen.DrawCenteredText("HAPPY HOLIDAYS", new Color(10000536));
+                }));
+            Scene rainbowScene = new Scene(matrix, 10, screen.RainbowTransition(4, 4));
 
-			while (true)
+            while (true)
             {
-                foreach (RGBLedCanvas canvas in christmasFrame)
+                christmasScene.Render();
+                santaAnimationScene.Render();
+                fireworkScene.Render();
+                thanksGivingScene.Render();
+                rainbowScene.Render();
+
+
+                if (Console.KeyAvailable)
                 {
-					matrix.SwapOnVsync(canvas);
-					Thread.Sleep(60);
-				}
-
-                foreach (RGBLedCanvas canvas in santaFrames)
-                {
-					matrix.SwapOnVsync(canvas);
-					Thread.Sleep(100);
-				}
-
-				foreach (RGBLedCanvas canvas in fireworkFrames)
-				{
-					matrix.SwapOnVsync(canvas);
-					Thread.Sleep(100);
-				}
-
-				foreach (RGBLedCanvas canvas in happyThxgivingFrame)
-				{
-					matrix.SwapOnVsync(canvas);
-					Thread.Sleep(30);
-				}
-
-				foreach (RGBLedCanvas canvas in rainbowFrames)
-				{
-					matrix.SwapOnVsync(canvas);
-					Thread.Sleep(10);
-				}
-			}
+                    break;
+                }
+            }
 
 			return 0;
         }
