@@ -1,5 +1,5 @@
 CSHARP_LIB=RGBLedMatrix.dll
-SOURCES=RGBLedCanvas.cs RGBLedMatrix.cs RGBLedFont.cs ./Enums/Alignments.cs ./Models/Glyph.cs ./Utils/LayoutUtils.cs ./Helpers/ScreenHelper.cs 
+SOURCES=RGBLedCanvas.cs RGBLedMatrix.cs RGBLedFont.cs ./Enums/Alignments.cs ./Models/Color.cs ./Models/Glyph.cs ./Utils/LayoutUtils.cs ./Helpers/CanvasHelper.cs 
 CSHARP_COMPILER=mcs
 
 RGB_LIBDIR=../../lib

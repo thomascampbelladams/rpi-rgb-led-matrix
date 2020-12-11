@@ -30,14 +30,12 @@ namespace rpi_rgb_led_matrix_sharp.Models
                 this._y = value + this.Height;
             }
         }
-        private RGBLedFont _rgbLedFont;
 
         public Glyph(char c, RGBLedFont font)
         {
             this.Height = font.Height();
             this.Width = font.Width($"{c}");
             this.Character = c;
-            this._rgbLedFont = font;
         }
     }
 }

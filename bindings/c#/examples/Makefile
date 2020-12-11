@@ -16,6 +16,7 @@ all: $(CSHARP_LIB)
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:pulsing-brightness.exe pulsing-brightness.cs
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:animation-example.exe animation-example.cs
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:rainbow-transition-example.exe rainbow-transition-example.cs
+	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:merry-christmas-example.exe merry-christmas-example.cs
 
 minimal-example.exe: $(CSHARP_LIB)
 	cp $(RGB_LIBRARY) $(RGB_LIBRARY_NAME).so

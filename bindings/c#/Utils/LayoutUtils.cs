@@ -51,8 +51,6 @@ namespace rpi_rgb_led_matrix_sharp.Utils
 
                 while (index > 0)
                 {
-                    List<Glyph> glyphs1 = Slice<Glyph>(leftOverGlyphs, 0, index).ToList();
-
                     leftOverGlyphs = Slice<Glyph>(leftOverGlyphs, index).ToList();
                     index = GetIndexOfWhiteSpace(leftOverGlyphs);
                     ret.Add(Slice<Glyph>(leftOverGlyphs, 0, index).ToList());
@@ -111,7 +109,6 @@ namespace rpi_rgb_led_matrix_sharp.Utils
 
         public static List<List<List<Glyph>>> TextToLines(RGBLedFont font, int maxW, string text)
         {
-            int fontHeight = font.Height();
             List<Glyph> glyphs = text.Select(c => c).Select(c => new Glyph(c, font)).ToList<Glyph>();
 
             return WordToLines(maxW, GlphysToWords(glyphs));
@@ -157,7 +154,6 @@ namespace rpi_rgb_led_matrix_sharp.Utils
                     foreach (Glyph glyph in word)
                     {
                         glyph.X = offsetX;
-                        Console.WriteLine($"glyph {glyph.Character} y: {offsetY + i * lineH}");
                         glyph.Y = offsetY + i * lineH;
 
                         offsetX += glyph.Width;

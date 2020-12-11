@@ -22,18 +22,33 @@ namespace font_example
             if (args.Length > 1)            
                 text = args[1];
 
-            ScreenHelper screen = new ScreenHelper();
-            screen.SetFont(args[0]);
-            //screen.DrawVerticallyCenteredText(text, new Color(0, 255, 0), true);
-            //Thread.Sleep(5000);
-            //screen.Clear();
-            //screen.DrawHorizontallyCenteredText(text, new Color(0, 255, 0), true);
-            //Thread.Sleep(5000);
-            //screen.Clear();
-            //screen.DrawCenteredText(text, new Color(0, 255, 0), true);
+            RGBLedMatrix matrix = new RGBLedMatrix(new RGBLedMatrixOptions
+            {
+                Rows = 32,
+                Cols = 64,
+                HardwareMapping = "adafruit-hat"
+            });
+            CanvasHelper screen = new CanvasHelper(matrix, 32, 64, "../../../fonts/8x13B.bdf");
+            List<RGBLedCanvas> testFrames1;
+            List<RGBLedCanvas> testFrames2;
 
-            screen.VerticalMarqueeText(text, new Color(0, 255, 0), 25, false);
-            screen.HorizontalMarqueeText(text, new Color(0, 255, 0), 25, false);
+            testFrames1 = screen.HorizontalMarqueeText("HELLO WORLD", new Color(12237498));
+            testFrames2 = screen.VerticalMarqueeText("HELLO WORLD", new Color(10000536));
+
+            while (true)
+            {
+                foreach (RGBLedCanvas canvas in testFrames1)
+                {
+                    matrix.SwapOnVsync(canvas);
+                    Thread.Sleep(60);
+                }
+
+                foreach (RGBLedCanvas canvas in testFrames2)
+                {
+                    matrix.SwapOnVsync(canvas);
+                    Thread.Sleep(60);
+                }
+            }
 
             while (!Console.KeyAvailable)
             {

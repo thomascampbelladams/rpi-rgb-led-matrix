@@ -15,7 +15,12 @@ namespace matrix_rain
         static int Main(string[] args)
         {
 
-            var matrix = new RGBLedMatrix(new RGBLedMatrixOptions { ChainLength = 2 });
+            var matrix = new RGBLedMatrix(new RGBLedMatrixOptions
+            {
+                Rows = 32,
+                Cols = 64,
+                HardwareMapping = "adafruit-hat"
+            });
             var canvas = matrix.CreateOffscreenCanvas();
             var rnd = new Random();
             var points = new List<Point>();
