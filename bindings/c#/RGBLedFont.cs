@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using rpi_rgb_led_matrix_sharp.Models;
 
 namespace rpi_rgb_led_matrix_sharp
 {

@@ -1,4 +1,4 @@
-﻿CSHARP_LIB=RGBLedMatrix.dll
+CSHARP_LIB=RGBLedMatrix.dll
 CSHARP_COMPILER=mcs
 CSHARP_LIBDIR=..
 CSHARP_LIBRARY=$(CSHARP_LIBDIR)/$(CSHARP_LIB)
@@ -17,6 +17,7 @@ all: $(CSHARP_LIB)
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:animation-example.exe animation-example.cs
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:rainbow-transition-example.exe rainbow-transition-example.cs
 	$(CSHARP_COMPILER) -r:$(CSHARP_LIB) -out:merry-christmas-example.exe merry-christmas-example.cs
+	$(CSHARP_COMPILER) -r:$(CSHARP_LIB),Newtonsoft.Json.dll -out:azure-queue-example.exe azure-queue-example.cs
 
 minimal-example.exe: $(CSHARP_LIB)
 	cp $(RGB_LIBRARY) $(RGB_LIBRARY_NAME).so

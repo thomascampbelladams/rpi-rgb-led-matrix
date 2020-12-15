@@ -1,6 +1,7 @@
 using rpi_rgb_led_matrix_sharp;
 using System;
 using System.Threading;
+using rpi_rgb_led_matrix_sharp.Models;
 
 namespace pulsing_brightness
 {

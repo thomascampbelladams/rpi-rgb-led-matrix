@@ -198,6 +198,15 @@ struct LedCanvas *led_matrix_swap_on_vsync(struct RGBLedMatrix *matrix,
   return from_canvas(to_matrix(matrix)->SwapOnVSync(to_canvas(canvas)));
 }
 
+struct LedCanvas* led_matrix_copy_frame(struct RGBLedMatrix* matrix, struct LedCanvas* canvas) {
+    auto newCanvas = to_matrix(matrix)->CreateFrameCanvas();
+    auto oldCanvas = to_canvas(canvas);
+
+    newCanvas->CopyFrom(*oldCanvas);
+
+    return from_canvas(newCanvas);
+}
+
 void led_matrix_set_brightness(struct RGBLedMatrix *matrix,
                                uint8_t brightness) {
   to_matrix(matrix)->SetBrightness(brightness);

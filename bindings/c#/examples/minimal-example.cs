@@ -1,4 +1,5 @@
 using rpi_rgb_led_matrix_sharp;
+using rpi_rgb_led_matrix_sharp.Models;
 
 namespace minimal_example
 {

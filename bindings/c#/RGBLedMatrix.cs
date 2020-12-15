@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using rpi_rgb_led_matrix_sharp.Utils;
+using rpi_rgb_led_matrix_sharp.Models;
 
 namespace rpi_rgb_led_matrix_sharp
 {
@@ -43,6 +44,9 @@ namespace rpi_rgb_led_matrix_sharp
 
         [DllImport("librgbmatrix.so")]
         internal static extern void led_matrix_clear(IntPtr matrix);
+
+        [DllImport("librgbmatrix.so")]
+        internal static extern IntPtr led_matrix_copy_frame(IntPtr matrix, IntPtr canvas);
         #endregion
 
         public RGBLedMatrix(int rows, int chained, int parallel)
@@ -141,6 +145,12 @@ namespace rpi_rgb_led_matrix_sharp
         public void SetPixel(int x, int y, Color color)
         {
             led_matrix_set_pixel(this.matrix, x, y, color.R, color.G, color.B);
+        }
+
+        public RGBLedCanvas CopyCanvas(RGBLedCanvas canvas)
+        {
+            var newCanvas = led_matrix_copy_frame(matrix, canvas.GetCanvasPtr());
+            return new RGBLedCanvas(newCanvas);
         }
 
         public void Clear()

@@ -310,6 +310,8 @@ void led_canvas_clear(struct LedCanvas *canvas);
 
 void led_matrix_clear(struct RGBLedMatrix* matrix);
 
+struct LedCanvas* led_matrix_copy_frame(struct RGBLedMatrix* matrix, struct LedCanvas* canvas);
+
 /** Fill matrix with given color. */
 void led_canvas_fill(struct LedCanvas *canvas, uint8_t r, uint8_t g, uint8_t b);
 

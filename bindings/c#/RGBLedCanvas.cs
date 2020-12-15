@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using rpi_rgb_led_matrix_sharp.Models;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace rpi_rgb_led_matrix_sharp
 {
@@ -48,6 +50,11 @@ namespace rpi_rgb_led_matrix_sharp
 
         public int Width {get; private set; }
         public int Height { get; private set; }
+
+        public IntPtr GetCanvasPtr()
+        {
+            return _canvas;
+        }
 
         public void SetPixel(int x, int y, Color color)
         {

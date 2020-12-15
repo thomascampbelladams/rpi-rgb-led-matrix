@@ -1,5 +1,5 @@
 CSHARP_LIB=RGBLedMatrix.dll
-SOURCES=RGBLedCanvas.cs RGBLedMatrix.cs RGBLedFont.cs ./Enums/Alignments.cs ./Models/Color.cs ./Models/Glyph.cs ./Models/Scene.cs ./Utils/LayoutUtils.cs ./Helpers/CanvasHelper.cs 
+SOURCES=RGBLedCanvas.cs RGBLedMatrix.cs RGBLedFont.cs ./Converters/SceneDataConverter.cs ./Enums/Alignments.cs ./Models/AzureQueueResponse.cs ./Models/Color.cs ./Models/Glyph.cs ./Models/Scene.cs ./Models/SceneModels.cs ./Utils/LayoutUtils.cs ./Helpers/CanvasHelper.cs 
 CSHARP_COMPILER=mcs
 
 RGB_LIBDIR=../../lib
@@ -9,7 +9,7 @@ RGB_LIBRARY=$(RGB_LIBDIR)/lib$(RGB_LIBRARY_NAME).so.1
 EXAMPLES_DIR=examples
 
 $(CSHARP_LIB) : $(SOURCES) $(RGB_LIBRARY)
-	$(CSHARP_COMPILER) -target:library -out:$@ $(SOURCES)
+	$(CSHARP_COMPILER) -r:Newtonsoft.Json.dll -target:library -out:$@ $(SOURCES)
 
 $(RGB_LIBRARY):
 	$(MAKE) -C $(RGB_LIBDIR)

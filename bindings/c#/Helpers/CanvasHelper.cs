@@ -251,7 +251,7 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
         {
             Tuple<int, int> widthAndHeight = FindAnimationFrameWidthAndHeight(animation);
             List<RGBLedCanvas> ret = new List<RGBLedCanvas>();
-            
+            RGBLedCanvas canvas = action(this._matrix);
             int pixelSpriteWidth = widthAndHeight.Item1;
             int pixelSpriteHeight = widthAndHeight.Item2;
             int shown = 0;
@@ -263,9 +263,9 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
 
                 foreach (uint[][] animationFrame in animation)
                 {
-                    RGBLedCanvas canvas = action(this._matrix);
-                    DrawSingleFrame(animationFrame, randomXStart, randomYStart, isTwoBitAnimation, canvas);
-                    ret.Add(canvas);
+                    RGBLedCanvas canvas1 = this._matrix.CopyCanvas(canvas);
+                    DrawSingleFrame(animationFrame, randomXStart, randomYStart, isTwoBitAnimation, canvas1);
+                    ret.Add(canvas1);
                 }
                 
                 shown++;
