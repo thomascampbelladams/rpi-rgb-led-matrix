@@ -303,13 +303,16 @@ void led_canvas_get_size(const struct LedCanvas *canvas,
 void led_canvas_set_pixel(struct LedCanvas *canvas, int x, int y,
                           uint8_t r, uint8_t g, uint8_t b);
 
+/**Set pixel at (x, y) with color (r,g,b) directly to the screen*/
 void led_matrix_set_pixel(struct RGBLedMatrix* matrix, int x, int y, uint8_t r, uint8_t g, uint8_t b);
 
 /** Clear screen (black). */
 void led_canvas_clear(struct LedCanvas *canvas);
 
+/** Clear screen (black).*/
 void led_matrix_clear(struct RGBLedMatrix* matrix);
 
+/**Memory copy a canvas and return it*/
 struct LedCanvas* led_matrix_copy_frame(struct RGBLedMatrix* matrix, struct LedCanvas* canvas);
 
 /** Fill matrix with given color. */

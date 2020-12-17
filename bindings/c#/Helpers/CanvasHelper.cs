@@ -8,6 +8,9 @@ using System.Threading;
 
 namespace rpi_rgb_led_matrix_sharp.Helpers
 {
+    /// <summary>
+    /// Used to help construct certain animations, like marquees, a rainbow transition, or custom animations defined in frames of pixel color values.
+    /// </summary>
     public class CanvasHelper
     {
         private RGBLedMatrix _matrix;
@@ -17,6 +20,13 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
         private Dictionary<string, List<Glyph>> cachesMappedGlyphs = new Dictionary<string, List<Glyph>>();
         private Dictionary<string, RGBLedCanvas> cachedCanvases = new Dictionary<string, RGBLedCanvas>();
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="matrix">Matrix to create <see cref="RGBLedCanvas"/> from</param>
+        /// <param name="matrixHeight">Height of the matrix screen</param>
+        /// <param name="matrixWidth">Width of the matrix screen</param>
+        /// <param name="font">Initial font to use</param>
         public CanvasHelper(RGBLedMatrix matrix, int matrixHeight, int matrixWidth, string font)
         {
             this._matrix = matrix;
@@ -25,11 +35,21 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             SetFont(font);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="RGBLedCanvas"/> from the matrix screen
+        /// </summary>
+        /// <returns>A new canvas</returns>
         public RGBLedCanvas CreateNewCanvas()
         {
             return this._matrix.CreateOffscreenCanvas();
         }
 
+        /// <summary>
+        /// Returns a set of canvases with vertically centered text drawn on it
+        /// </summary>
+        /// <param name="lineText">Text to render</param>
+        /// <param name="color">Color for the text</param>
+        /// <returns>Canvas with the text on it</returns>
         public RGBLedCanvas DrawVerticallyCenteredText(string lineText, Color color)
         {
             string cachedCanvasKey = $"{lineText}--DrawVerticallyCenteredText--{color.R},{color.B},{color.G}";
@@ -57,6 +77,12 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return ret;
         }
 
+        /// <summary>
+        /// Returns a <see cref="RGBLedCanvas"/> with horizontally centered text rendered on it.
+        /// </summary>
+        /// <param name="lineText">Text to render</param>
+        /// <param name="color">Color to render the text in</param>
+        /// <returns>Canvas with horizontally centered text drawn on it.</returns>
         public RGBLedCanvas DrawHorizontallyCenteredText(string lineText, Color color)
         {
             RGBLedCanvas ret = this._matrix.CreateOffscreenCanvas();
@@ -80,6 +106,12 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return ret;
         }
 
+        /// <summary>
+        /// Returns a <see cref="RGBLedCanvas"/> with centered text rendered on it.
+        /// </summary>
+        /// <param name="lineText">Text to render</param>
+        /// <param name="color">Color to render the text in</param>
+        /// <returns>Canvas with horizontally centered text drawn on it.</returns>
         public RGBLedCanvas DrawCenteredText(string lineText, Color color)
         {
             RGBLedCanvas ret = this._matrix.CreateOffscreenCanvas();
@@ -103,6 +135,13 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return ret;
         }
 
+        /// <summary>
+        /// Takes text and returns a list of Glyphs mapped to coordinates with line wrapping taken into account
+        /// </summary>
+        /// <param name="lineText">Text to render</param>
+        /// <param name="alignV">Vertical alignment for the text</param>
+        /// <param name="alignh">Horizontal alignment for the text</param>
+        /// <returns><see cref="List{Glyph}"/> that are mapped to base coordinates.</returns>
         private List<Glyph> GetLines(string lineText, VerticleAlignment alignV, HorizontalAlignment alignh)
         {
             return LayoutUtils.LinesToMappedGlyphs(
@@ -110,6 +149,12 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
                 this._font.Height(), this._matrixWidth, this._matrixHeight, alignh, alignV);
         }
 
+        /// <summary>
+        /// Returns a <see cref="List{RGBLedCanvas}"/> that represent the frames for a vertical marquee animation.
+        /// </summary>
+        /// <param name="lineText">Text to render</param>
+        /// <param name="color">Color for the text</param>
+        /// <returns>A series of canvases that should show a marquee if rendered in order.</returns>
         public List<RGBLedCanvas> VerticalMarqueeText(string lineText, Color color)
         {
             int yOffset = this._matrixHeight;
@@ -131,6 +176,12 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return canvasFrames;
         }
 
+        /// <summary>
+        ///  Returns a <see cref="List{RGBLedCanvas}"/> that represent the frames for a horizontal marquee animation.
+        /// </summary>
+        /// <param name="lineText">Text to render</param>
+        /// <param name="color">Color for the text</param>
+        /// <returns>A series of canvases that should show a marquee if rendered in order.</returns>
         public List<RGBLedCanvas> HorizontalMarqueeText(string lineText, Color color)
         {
             int xOffset = this._matrixWidth;
@@ -152,6 +203,15 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return canvasFrames;
         }
 
+        /// <summary>
+        /// Returns the next frame for a marquee
+        /// </summary>
+        /// <param name="offset">coordinate offset to begin with</param>
+        /// <param name="stringMeasure">width or height of the string</param>
+        /// <param name="glyphs">The glyphs in the string</param>
+        /// <param name="isHorizontal">Set to true if this is for a horizontal marquee, false for vertical.</param>
+        /// <param name="color">Color of the text to use.</param>
+        /// <returns>The next frame in the marquee</returns>
         private RGBLedCanvas IncrementMarquee(int offset, int stringMeasure, List<Glyph> glyphs,
             bool isHorizontal, Color color)
         {
@@ -172,11 +232,19 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return ret;
         }
 
+        /// <summary>
+        /// Sets the font for the next scene to use
+        /// </summary>
+        /// <param name="fontPath">File path to the BDF font to use</param>
         public void SetFont(string fontPath)
         {
             this._font = new RGBLedFont(fontPath);
         }
 
+        /// <summary>
+        /// Clears a canvas and then the matrix
+        /// </summary>
+        /// <param name="canvas">Canvas to clear</param>
         public void Clear(RGBLedCanvas canvas = null)
         {
             canvas.Clear();
@@ -184,6 +252,14 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             this._matrix.Clear();
         }
 
+        /// <summary>
+        /// Draws a single frame of a custom animation
+        /// </summary>
+        /// <param name="animationFrame"><see cref="uint[][]"/> that represents each pixel in the animation frame. Each <see cref="uint[]"/> represents a horizontal row of pixel color values in the animation. The complete set represents a 2d image.</param>
+        /// <param name="startX">X coordinate to begin the left of the animation</param>
+        /// <param name="startY">Y coordinate to begin the top of the animation</param>
+        /// <param name="isTwoBitAnimation">If true, will instead expect to see a 2d array of 0, 1, and 2. If 0, the pixel color value is black for that pixel. If 1, the pixel color value is white. If 2, the pixel color is random.</param>
+        /// <param name="canvas">Canvas to draw animation frame to.</param>
         private void DrawSingleFrame(uint[][] animationFrame, int startX, int startY, bool isTwoBitAnimation, RGBLedCanvas canvas)
         {
             uint maxColorValue = 0xFFFFFF;
@@ -223,6 +299,11 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             }
         }
 
+        /// <summary>
+        /// Finds the width/height of a custom animation.
+        /// </summary>
+        /// <param name="animation"><see cref="uint[][][]"/> that represents a custom animation.</param>
+        /// <returns><see cref="Tuple{int, int}"/> where the first value is width and the second is height.</returns>
         private Tuple<int, int> FindAnimationFrameWidthAndHeight(uint[][][] animation)
         {
             int largestWidth = 0;
@@ -247,6 +328,17 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return new Tuple<int, int>(largestWidth, largestHeight); 
         }
 
+        /// <summary>
+        /// Returns a <see cref="List{RGBLedCanvas}"/> the represents a custom animation when displayed in order
+        /// The animation is represented by <see cref="uint[][][]"/>. The <see cref="uint[][]"/> represents a single frame in the animation.
+        /// The <see cref="uint[]"/> represents a row of pixels in the animation, where each value is hex color value for the pixel.
+        /// The animation will play at a random spot on the screen.
+        /// </summary>
+        /// <param name="animation">Custom animation as described</param>
+        /// <param name="numberOfTimesToShow">Number of times to show the animation</param>
+        /// <param name="isTwoBitAnimation">If true, instead of color values, the animation can use 0, 1, or 2 instead. 0 representing black, 1 representing white, and 2 representing a random color.</param>
+        /// <param name="action">Function to execute to get the background canvas.</param>
+        /// <returns>A series of canvases that when displayed in order will show the animation.</returns>
         public List<RGBLedCanvas> DoAnimation(uint[][][] animation, int numberOfTimesToShow, bool isTwoBitAnimation, Func<RGBLedMatrix, RGBLedCanvas> action)
         {
             Tuple<int, int> widthAndHeight = FindAnimationFrameWidthAndHeight(animation);
@@ -274,6 +366,12 @@ namespace rpi_rgb_led_matrix_sharp.Helpers
             return ret;
         }
 
+        /// <summary>
+        /// Returns a <see cref="List{RGBLedCanvas}"/> that represents frames for a rainbow animation.
+        /// </summary>
+        /// <param name="heightOfColorBlock">Maximum height to increment the animation</param>
+        /// <param name="widthOfColorBlock">Maximum width to increment the animation</param>
+        /// <returns></returns>
         public List<RGBLedCanvas> RainbowTransition(int heightOfColorBlock, int widthOfColorBlock)
         {
             uint[] colors = new uint[]

@@ -9,6 +9,9 @@ using rpi_rgb_led_matrix_sharp.Models;
 
 namespace rpi_rgb_led_matrix_sharp
 {
+    /// <summary>
+    /// Representation of the RGB LED Screen
+    /// </summary>
     public class RGBLedMatrix : IDisposable
     {
         #region DLLImports
@@ -49,11 +52,21 @@ namespace rpi_rgb_led_matrix_sharp
         internal static extern IntPtr led_matrix_copy_frame(IntPtr matrix, IntPtr canvas);
         #endregion
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="rows">Number of rows of pixels the screen has</param>
+        /// <param name="chained">Number of chained screens connected</param>
+        /// <param name="parallel">Number of parallel screens caonnected</param>
         public RGBLedMatrix(int rows, int chained, int parallel)
         {
             matrix= led_matrix_create(rows, chained, parallel);
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="options">Options to use for the screen</param>
         public RGBLedMatrix(RGBLedMatrixOptions options)
         {
             var opt = new InternalRGBLedMatrixOptions();
@@ -122,42 +135,76 @@ namespace rpi_rgb_led_matrix_sharp
             }
         }
 
+        /// <summary>
+        /// Pointer to the C++ object for the matrix
+        /// </summary>
         private IntPtr matrix;
 
+        /// <summary>
+        /// Creates a new canvas. This is useful for creating a new frame to show on the screen.
+        /// </summary>
+        /// <returns>A blank <see cref="RGBLedCanvas"/></returns>
         public RGBLedCanvas CreateOffscreenCanvas()
         {
             var canvas=led_matrix_create_offscreen_canvas(matrix);
             return new RGBLedCanvas(canvas);
         }
 
+        /// <summary>
+        /// Returns the current canvas the matrix is displaying.
+        /// </summary>
+        /// <returns>the <see cref="RGBLedCanvas"/></returns>
         public RGBLedCanvas GetCanvas()
         {
             var canvas = led_matrix_get_canvas(matrix);
             return new RGBLedCanvas(canvas);
         }
 
+        /// <summary>
+        /// Swaps in a canvas on the next vsync and returns the previous one.
+        /// This is useful for rendering frames on the screen.
+        /// </summary>
+        /// <param name="canvas"><see cref="RGBLedCanvas"/> to swap in.</param>
+        /// <returns>The previously rendered <see cref="RGBLedMatrix"/></returns>
         public RGBLedCanvas SwapOnVsync(RGBLedCanvas canvas)
         {
             canvas._canvas = led_matrix_swap_on_vsync(matrix, canvas._canvas);
             return canvas;
         }
 
+        /// <summary>
+        /// Sets a pixel directly on the RGB Matrix, foregoing the need for a canvas.
+        /// </summary>
+        /// <param name="x">x coordinate to set</param>
+        /// <param name="y">y coordinate to set</param>
+        /// <param name="color">Color to set the pixel</param>
         public void SetPixel(int x, int y, Color color)
         {
             led_matrix_set_pixel(this.matrix, x, y, color.R, color.G, color.B);
         }
 
+        /// <summary>
+        /// Does a memory copy of the passed in canvas, and returns the copy. This is useful for copying common frames
+        /// </summary>
+        /// <param name="canvas"><see cref="RGBLedCanvas"/> to copy.</param>
+        /// <returns>The copied canvas</returns>
         public RGBLedCanvas CopyCanvas(RGBLedCanvas canvas)
         {
             var newCanvas = led_matrix_copy_frame(matrix, canvas.GetCanvasPtr());
             return new RGBLedCanvas(newCanvas);
         }
 
+        /// <summary>
+        /// Clears the matrix screen
+        /// </summary>
         public void Clear()
         {
             led_matrix_clear(this.matrix);
         }
 
+        /// <summary>
+        /// Brightness of the screen
+        /// </summary>
         public byte Brightness
         {
           get { return led_matrix_get_brightness(matrix); }
